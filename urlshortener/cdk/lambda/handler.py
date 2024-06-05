@@ -12,7 +12,7 @@ tableName = 'urlMapping2'
 
 def handler(event, context):
 
-    if event['body']:
+    if event['body']: ## assume it's a POST request
         r_body = json.loads(event['body'])
 
         if r_body["longUrl"]: 
@@ -28,13 +28,8 @@ def handler(event, context):
             for i in range(7, len(short_url)):
                 res=table.get_item(Key={'s_url': short_url[:i]})
                 try:
-                    if res["Item"]["l_url"] == long_url: ## will fail if l_url is not in the db, otherwise it will return the short_url (someone has already shortened this url)
-                        return {
-                            'statusCode': 200,
-                            'body': json.dumps( {"shortenedUrl": res["Item"]["s_url"]})
-                            }
-                    
-                except KeyError:
+                    res['Item']
+                except KeyError: ## store in db
                     short_url = short_url[:i]
                     break
 
